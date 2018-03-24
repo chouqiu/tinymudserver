@@ -15,4 +15,7 @@ Room 1004.%rThis is the training room. One day you might receive all sorts of in
 s 1000
 1005
 Eastern corridor (room 1005).%rThis east-west corridor looks like it could be interesting to follow.
-w 1002
+w 1002 e 1006
+1006
+洛阳 %r这里是洛阳，中国最大的都市，大街上熙熙攘攘，你现在位于涧西区牡丹广场，可以四处看看。
+w 1005

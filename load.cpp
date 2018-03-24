@@ -143,6 +143,18 @@ void LoadRooms ()
 
 } // end of LoadRooms
 
+void LoadNPCs () {
+  tPlayer *p = new tPlayer();
+  p->playername = "Bob";
+  p->room = 1006;
+  playerlist.push_back(p);
+
+  p = new tPlayer();
+  p->playername = "Alice";
+  p->room = 1002;
+  playerlist.push_back(p);
+}
+
 // build up our commands map and connection states
 void LoadThings ()
 {
@@ -154,5 +166,5 @@ void LoadThings ()
   LoadControlFile ();
   LoadMessages ();
   LoadRooms ();
-
+  LoadNPCs();
 } // end of LoadThings

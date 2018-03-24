@@ -46,6 +46,18 @@ tPlayer * FindPlayer (const string & name)
   
 } /* end of FindPlayer */
 
+tPlayer * FindPlayer (int vnum)
+{
+  tPlayerListIterator i =
+    find_if (playerlist.begin (), playerlist.end (), findPlayerVNum (vnum));
+
+  if (i == playerlist.end ())
+    return NULL;
+  else
+    return *i;
+  
+} /* end of FindPlayer */
+
 // member function to find another playing, including myself
 tPlayer * tPlayer::GetPlayer (istream & args, const string & noNameMessage, const bool & notme)
 {

@@ -21,6 +21,10 @@ typedef enum
   ePlaying              // this is the normal 'connected' mode
 } tConnectionStates;
 
+typedef enum {
+  eMale,
+  eFemale,
+} tSex;
 /*---------------------------------------------- */
 /*  player class - holds details about each connected player */
 /*---------------------------------------------- */
@@ -35,6 +39,15 @@ private:
   string inbuf;       // pending input
   string address;     // address player is from
 
+private:
+  int life;
+  int intelli;
+  int emotion;
+  int force;
+  tSex sex;
+  int birth;
+  bool isNPC;
+
 public:
   tConnectionStates connstate;      /* connection state */
   string prompt;      // the current prompt
@@ -45,8 +58,10 @@ public:
   bool closing;     // true if they are about to leave us
   std::set<string, ciLess> flags;  // player flags
 
+  tPlayer () : s(NO_SOCKET), isNPC(true), connstate(ePlaying), closing(false) { Init(); }
+
   tPlayer (const int sock, const int p, const string a) 
-    : s (sock), port (p), address (a), closing (false)  
+    : s (sock), port (p), address (a), isNPC(false), connstate(eAwaitingName), closing (false)  
       { Init (); } // ctor
   
   ~tPlayer () // dtor
@@ -60,16 +75,24 @@ public:
   
   void Init ()
     {
-    connstate = eAwaitingName;
     room = INITIAL_ROOM;
     flags.clear ();
     prompt = "Enter your name, or 'new' to create a new character ...  "; 
+    life = 100;
+    intelli = 60;
+    emotion = 50;
+    force = 40;
+    sex = eMale;
+    birth = 0;
     }
     
   // what's our socket?
   int GetSocket () const { return s; }
   // true if connected at all
-  bool Connected () const { return s != NO_SOCKET; }
+  bool Connected () const { return s != NO_SOCKET || IsNPC(); }
+  
+  bool IsNPC() const { return isNPC; }
+  
   // true if this player actively playing
   bool IsPlaying () const { return Connected () && connstate == ePlaying && !closing; }
   // true if we have something to send them
@@ -154,6 +177,19 @@ struct findPlayerName
   bool operator() (const tPlayer * p) const
     {
     return p->IsPlaying () && ciStringEqual (p->playername, name);
+    } // end of operator()  
+};  // end of findPlayerName
+
+// functor to help finding a player by room num
+struct findPlayerVNum
+{
+  int roomid;
+  // ctor
+  findPlayerVNum (int vnum) : roomid( vnum ) {} 
+  // check for player with correct name, and actually playing
+  bool operator() (const tPlayer * p) const
+    {
+    return p->IsPlaying () && roomid == p->room;
     } // end of operator()  
 };  // end of findPlayerName
 
